@@ -1,0 +1,12 @@
+{
+    "mdcv": {
+        "preset": "DisplayP3",
+
+        "max_display_mastering_luminance": 4000,
+        "min_display_mastering_luminance": 0.0050
+    },
+    "cll": {
+        "max_content_light_level": 2800,
+        "max_average_light_level": 225
+    }
+}
