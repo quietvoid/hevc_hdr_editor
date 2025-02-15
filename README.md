@@ -1,6 +1,6 @@
-**`hevc_hdr_editor`** is a utility to losslessly edit HDR metadata in HEVC files.
+## hevc_hdr_editor
 
-&nbsp;
+Utility to losslessly edit HDR metadata in HEVC files 
 
 ## **Building**
 ### **Toolchain**
@@ -20,17 +20,11 @@ cargo build --release
 hevc_hdr_editor [OPTIONS] --config <CONFIG> video.hevc
 ```
 
-Supported input files:
+### Supported input files:
 - Raw HEVC bitstream
 - Matroska (mkv) file with HEVC video track
 
-### Options
-* `--start-code` HEVC NALU start code to use when writing HEVC.
-    - Options: `annex-b`, `four`
-    - `annex-b` varies the start code, according to spec. Almost matches `x265` behaviour.
-    - `four` is the default, writing a 4-byte start code all the time.
-
-## Edit config
+### Edit config
 
 The config is expected to follow the template below:
 ```json5
