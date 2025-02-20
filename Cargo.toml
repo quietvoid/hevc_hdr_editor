@@ -14,7 +14,7 @@ path = "src/main.rs"
 
 [dependencies]
 bitvec_helpers = "3.1.6"
-hevc_parser = { version = "0.6.7", features = ["hevc_io"] }
+hevc_parser = { version = "0.6.8", features = ["hevc_io"] }
 
 anyhow = "1.0.95"
 clap = { version = "4.5.29", features = ["derive", "wrap_help", "deprecated"] }

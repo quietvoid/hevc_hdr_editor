@@ -63,9 +63,9 @@ dependencies = [
 
 [[package]]
 name = "anyhow"
-version = "1.0.95"
+version = "1.0.96"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "34ac096ce696dc2fcabef30516bb13c0a68a11d30131d3df6f04711467681b04"
+checksum = "6b964d184e89d9b6b67dd2715bc8e74cf3107fb2b529990c90cf517326150bf4"
 
 [[package]]
 name = "assert_cmd"
@@ -452,9 +452,9 @@ dependencies = [
 
 [[package]]
 name = "hevc_parser"
-version = "0.6.7"
+version = "0.6.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "db93f1b11d9fdd31c18ba815c84edad115bae0ac4797ba5e93db4e15d9d70517"
+checksum = "1e98d088d307c457bf32a9f47495217701144269230f677797585208ff8a7828"
 dependencies = [
  "anyhow",
  "bitvec_helpers",
