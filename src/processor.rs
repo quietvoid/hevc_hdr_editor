@@ -6,10 +6,10 @@ use anyhow::Result;
 use hevc_parser::utils::clear_start_code_emulation_prevention_3_byte;
 use indicatif::ProgressBar;
 
-use hevc_parser::hevc::{NALUnit, SeiMessage, NAL_SEI_PREFIX};
+use hevc_parser::HevcParser;
+use hevc_parser::hevc::{NAL_SEI_PREFIX, NALUnit, SeiMessage};
 use hevc_parser::io::processor::{HevcProcessor, HevcProcessorOpts};
 use hevc_parser::io::{IoFormat, IoProcessor, StartCodePreset};
-use hevc_parser::HevcParser;
 use num_enum::TryFromPrimitive;
 
 use crate::utils::{encode_edited_sei_to_nal, encode_payload_to_sei_prefix};
@@ -17,7 +17,7 @@ use crate::utils::{encode_edited_sei_to_nal, encode_payload_to_sei_prefix};
 use super::cll_metadata::CllMetadata;
 use super::mdcv_metadata::MdcvMetadata;
 use super::utils::sei_message_data;
-use super::{edit_config::EditConfig, Opt};
+use super::{Opt, edit_config::EditConfig};
 
 pub struct Processor {
     input: PathBuf,

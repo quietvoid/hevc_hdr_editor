@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::path::Path;
 
-use anyhow::{bail, Result};
+use anyhow::{Result, bail};
 use serde::{Deserialize, Serialize};
 
 use super::mdcv_metadata::{MasteringDisplayPrimaries, MdcvPrimariesPreset};

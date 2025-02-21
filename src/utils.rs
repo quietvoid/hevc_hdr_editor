@@ -1,9 +1,9 @@
 use std::path::PathBuf;
 use std::{fs::File, path::Path};
 
-use anyhow::{bail, ensure, Result};
+use anyhow::{Result, bail, ensure};
 use bitvec_helpers::bitstream_io_writer::BitstreamIoWriter;
-use hevc_parser::hevc::{SeiMessage, NAL_SEI_PREFIX};
+use hevc_parser::hevc::{NAL_SEI_PREFIX, SeiMessage};
 use hevc_parser::utils::add_start_code_emulation_prevention_3_byte;
 use indicatif::{ProgressBar, ProgressStyle};
 
