@@ -72,16 +72,16 @@ impl MdcvMetadata {
         let mut writer = BitstreamIoWriter::with_capacity(24);
 
         for c in 0..3 {
-            writer.write_n(&self.primaries.display_primaries_x[c], 16)?;
-            writer.write_n(&self.primaries.display_primaries_y[c], 16)?;
+            writer.write::<16, u16>(self.primaries.display_primaries_x[c])?;
+            writer.write::<16, u16>(self.primaries.display_primaries_y[c])?;
         }
 
-        for v in &self.primaries.white_point {
-            writer.write_n(v, 16)?;
+        for v in self.primaries.white_point {
+            writer.write::<16, u16>(v)?;
         }
 
-        writer.write_n(&self.max_display_mastering_luminance, 32)?;
-        writer.write_n(&self.min_display_mastering_luminance, 32)?;
+        writer.write::<32, u32>(self.max_display_mastering_luminance)?;
+        writer.write::<32, u32>(self.min_display_mastering_luminance)?;
 
         Ok(writer.into_inner())
     }

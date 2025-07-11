@@ -161,7 +161,7 @@ impl IoProcessor for Processor {
                     continue;
                 }
 
-                let edited_seis = messages
+                let mut edited_seis = messages
                     .iter()
                     .map(|msg| Self::get_edited_sei_for_message(&sei_payload, msg, &self.config));
 
@@ -194,7 +194,7 @@ impl IoProcessor for Processor {
                             false,
                         )?;
                     }
-                } else if let Some(edited_res) = edited_seis.last() {
+                } else if let Some(edited_res) = edited_seis.next_back() {
                     let edited_sei = edited_res?;
                     let final_data = encode_edited_sei_to_nal(edited_sei)?;
 

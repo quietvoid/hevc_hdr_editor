@@ -54,13 +54,13 @@ pub fn encode_payload_to_sei_prefix(payload_type: u8, payload: &[u8]) -> Result<
     // Write NALU SEI_PREFIX header
     let mut header_writer = BitstreamIoWriter::with_capacity(payload.len());
 
-    header_writer.write(false)?; // forbidden_zero_bit
+    header_writer.write_bit(false)?; // forbidden_zero_bit
 
-    header_writer.write_n(&NAL_SEI_PREFIX, 6)?; // nal_type
-    header_writer.write_n(&0_u8, 6)?; // nuh_layer_id
-    header_writer.write_n(&1_u8, 3)?; // nuh_temporal_id_plus1
+    header_writer.write::<6, u8>(NAL_SEI_PREFIX)?; // nal_type
+    header_writer.write_const::<6, 0>()?; // nuh_layer_id
+    header_writer.write_const::<3, 1>()?; // nuh_temporal_id_plus1
 
-    header_writer.write_n(&payload_type, 8)?;
+    header_writer.write::<8, u8>(payload_type)?;
 
     // FIXME: This should probably be 1024 but not sure how to write a longer header
     ensure!(
@@ -69,7 +69,7 @@ pub fn encode_payload_to_sei_prefix(payload_type: u8, payload: &[u8]) -> Result<
         payload.len()
     );
 
-    header_writer.write_n(&(payload.len() as u64), 8)?;
+    header_writer.write::<8, u8>(payload.len() as u8)?;
 
     let mut data = header_writer.into_inner();
     data.extend_from_slice(payload);

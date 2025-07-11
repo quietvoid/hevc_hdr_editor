@@ -23,8 +23,8 @@ impl CllMetadata {
     pub fn encode(&self) -> Result<Vec<u8>> {
         let mut writer = BitstreamIoWriter::with_capacity(4);
 
-        writer.write_n(&self.max_content_light_level, 16)?;
-        writer.write_n(&self.max_average_light_level, 16)?;
+        writer.write::<16, u16>(self.max_content_light_level)?;
+        writer.write::<16, u16>(self.max_average_light_level)?;
 
         Ok(writer.into_inner())
     }
