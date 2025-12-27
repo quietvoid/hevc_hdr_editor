@@ -1,13 +1,13 @@
 use std::path::Path;
 
 use anyhow::Result;
-use assert_cmd::Command;
+use assert_cmd::cargo;
 use assert_fs::prelude::*;
 use predicates::prelude::*;
 
 #[test]
 fn help() -> Result<()> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = cargo::cargo_bin_cmd!();
     let assert = cmd.arg("--help").assert();
 
     assert
@@ -21,7 +21,7 @@ fn help() -> Result<()> {
 
 #[test]
 fn version() -> Result<()> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = cargo::cargo_bin_cmd!();
     let assert = cmd.arg("--version").assert();
 
     assert.success().stderr(predicate::str::is_empty());
@@ -39,7 +39,7 @@ fn edit() -> Result<()> {
     let output_file = temp.child("output.hevc");
     let expected_file = Path::new("assets/regular_example_cfg.hevc");
 
-    let assert = Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+    let assert = cargo::cargo_bin_cmd!()
         .arg("--input")
         .arg(input_file)
         .arg("--config")
@@ -67,7 +67,7 @@ fn edit_mkv() -> Result<()> {
     let output_file = temp.child("output.hevc");
     let expected_file = Path::new("assets/regular_example_cfg.hevc");
 
-    let assert = Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+    let assert = cargo::cargo_bin_cmd!()
         .arg("--input")
         .arg(input_file)
         .arg("--config")
@@ -95,7 +95,7 @@ fn edit_multimsg_sei() -> Result<()> {
     let output_file = temp.child("output.hevc");
     let expected_file = Path::new("assets/multimsg-sei-example-cfg.hevc");
 
-    let assert = Command::cargo_bin(env!("CARGO_PKG_NAME"))?
+    let assert = cargo::cargo_bin_cmd!()
         .arg("--input")
         .arg(input_file)
         .arg("--config")
