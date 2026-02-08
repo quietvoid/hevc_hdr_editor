@@ -5,7 +5,7 @@ Utility to losslessly edit HDR metadata in HEVC files
 ## **Building**
 ### **Toolchain**
 
-The minimum Rust version to build **`hevc_hdr_editor`** is 1.85.0.
+The minimum Rust version to build **`hevc_hdr_editor`** is 1.88.0.
 
 ### **Release binary**
 To build release binary in `target/release/hevc_hdr_editor` run:
