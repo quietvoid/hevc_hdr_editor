@@ -8,7 +8,10 @@ use super::edit_config::EditMdcvMetadata;
 const D65_WHITEPOINT: [u16; 2] = [15635, 16450];
 const MDL_FACTOR: f32 = 10_000.0;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+// HEVC uses a g,b,r ordering, which we convert to a more natural r,g,b
+const COMPONENTS_MAPPING: [usize; 3] = [1, 2, 0];
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct MdcvMetadata {
     pub primaries: MasteringDisplayPrimaries,
 
@@ -19,7 +22,8 @@ pub struct MdcvMetadata {
 }
 
 /// Values in units of 0.00002
-#[derive(Serialize, Deserialize, Debug, Clone)]
+/// The primaries are always expected to be in r,g,b order
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct MasteringDisplayPrimaries {
     pub display_primaries_x: [u16; 3],
     pub display_primaries_y: [u16; 3],
@@ -46,7 +50,8 @@ impl MdcvMetadata {
         let mut display_primaries_x = [0; 3];
         let mut display_primaries_y = [0; 3];
 
-        for c in 0..3 {
+        // reorder directly into r,g,b ordering
+        for c in COMPONENTS_MAPPING {
             display_primaries_x[c] = reader.get_n(16)?;
             display_primaries_y[c] = reader.get_n(16)?;
         }
@@ -71,7 +76,8 @@ impl MdcvMetadata {
     pub fn encode(&self) -> Result<Vec<u8>> {
         let mut writer = BitstreamIoWriter::with_capacity(24);
 
-        for c in 0..3 {
+        // reorder back to gbr
+        for c in COMPONENTS_MAPPING {
             writer.write::<16, u16>(self.primaries.display_primaries_x[c])?;
             writer.write::<16, u16>(self.primaries.display_primaries_y[c])?;
         }
@@ -138,5 +144,35 @@ impl MdcvPrimariesPreset {
             Self::DisplayP3 => MasteringDisplayPrimaries::displayp3(),
             Self::BT2020 => MasteringDisplayPrimaries::bt2020(),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse_encode_roundtrip() -> Result<()> {
+        // BT.2020
+        let data: &[u8] = &[
+            33, 52, 155, 170, 25, 150, 8, 252, 138, 72, 57, 8, 61, 19, 64, 66, 0, 152, 150, 128, 0,
+            0, 0, 1,
+        ];
+
+        let res = MdcvMetadata::parse(data)?;
+        assert_eq!(
+            res,
+            MdcvMetadata {
+                primaries: MdcvPrimariesPreset::BT2020.primaries(),
+                max_display_mastering_luminance: 10000000,
+                min_display_mastering_luminance: 1
+            }
+        );
+
+        // round trips back to original
+        let encoded = res.encode()?;
+        assert_eq!(data, &encoded);
+
+        Ok(())
     }
 }
