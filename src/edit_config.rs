@@ -29,7 +29,7 @@ pub struct EditMdcvMetadata {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct EditCllMetadata {
     pub max_content_light_level: Option<u16>,
-    pub max_average_light_level: Option<u16>,
+    pub max_frame_average_light_level: Option<u16>,
 }
 
 impl EditConfig {

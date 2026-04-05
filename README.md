@@ -55,7 +55,7 @@ The config is expected to follow the template below:
         // MaxCLL value to set
         "max_content_light_level": 1000,
         // MaxFALL value to set
-        "max_average_light_level": 400
+        "max_frame_average_light_level": 400
     }
 }
 ```

@@ -7,7 +7,7 @@ use super::edit_config::EditCllMetadata;
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct CllMetadata {
     pub max_content_light_level: u16,
-    pub max_average_light_level: u16,
+    pub max_frame_average_light_level: u16,
 }
 
 impl CllMetadata {
@@ -16,7 +16,7 @@ impl CllMetadata {
 
         Ok(Self {
             max_content_light_level: reader.get_n(16)?,
-            max_average_light_level: reader.get_n(16)?,
+            max_frame_average_light_level: reader.get_n(16)?,
         })
     }
 
@@ -24,7 +24,7 @@ impl CllMetadata {
         let mut writer = BitstreamIoWriter::with_capacity(4);
 
         writer.write::<16, u16>(self.max_content_light_level)?;
-        writer.write::<16, u16>(self.max_average_light_level)?;
+        writer.write::<16, u16>(self.max_frame_average_light_level)?;
 
         Ok(writer.into_inner())
     }
@@ -34,8 +34,8 @@ impl CllMetadata {
             self.max_content_light_level = max_cll;
         }
 
-        if let Some(max_fall) = src.max_average_light_level {
-            self.max_average_light_level = max_fall;
+        if let Some(max_fall) = src.max_frame_average_light_level {
+            self.max_frame_average_light_level = max_fall;
         }
 
         self

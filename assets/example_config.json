@@ -7,6 +7,6 @@
     },
     "cll": {
         "max_content_light_level": 2800,
-        "max_average_light_level": 225
+        "max_frame_average_light_level": 225
     }
 }
