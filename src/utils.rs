@@ -9,8 +9,6 @@ use indicatif::{ProgressBar, ProgressStyle};
 
 use hevc_parser::io::IoFormat;
 
-use super::processor::EditedSei;
-
 pub fn initialize_progress_bar<P: AsRef<Path>>(format: &IoFormat, input: P) -> Result<ProgressBar> {
     let pb: ProgressBar;
     let bytes_count;
@@ -79,8 +77,4 @@ pub fn encode_payload_to_sei_prefix(payload_type: u8, payload: &[u8]) -> Result<
     add_start_code_emulation_prevention_3_byte(&mut data);
 
     Ok(data)
-}
-
-pub fn encode_edited_sei_to_nal(edited_sei: EditedSei) -> Result<Vec<u8>> {
-    encode_payload_to_sei_prefix(edited_sei.payload_type(), &edited_sei.encode_payload()?)
 }

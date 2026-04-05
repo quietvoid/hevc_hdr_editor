@@ -12,7 +12,7 @@ use hevc_parser::io::processor::{HevcProcessor, HevcProcessorOpts};
 use hevc_parser::io::{IoFormat, IoProcessor, StartCodePreset};
 use num_enum::TryFromPrimitive;
 
-use crate::utils::{encode_edited_sei_to_nal, encode_payload_to_sei_prefix};
+use crate::utils::encode_payload_to_sei_prefix;
 
 use super::cll_metadata::CllMetadata;
 use super::mdcv_metadata::MdcvMetadata;
@@ -99,6 +99,7 @@ impl Processor {
         msg: &'a SeiMessage,
         config: &EditConfig,
     ) -> Result<EditedSei<'a>> {
+        // leave original sei untouched by default
         let mut ret = Ok(EditedSei::None(msg));
 
         let payload_type = SeiPayloadType::try_from(msg.payload_type).ok();
@@ -171,18 +172,7 @@ impl IoProcessor for Processor {
                     // Split all messages into separate NALs, even if they're not edited
                     for edited_res in edited_seis {
                         let edited_sei = edited_res?;
-
-                        let nal = match edited_sei {
-                            EditedSei::None(msg) => encode_payload_to_sei_prefix(
-                                msg.payload_type,
-                                sei_message_data(msg, &sei_payload),
-                            ),
-                            EditedSei::Mdcv(_) | EditedSei::Cll(_) => {
-                                encode_edited_sei_to_nal(edited_sei)
-                            }
-                        }?;
-
-                        new_nals.push(nal);
+                        new_nals.push(edited_sei.encode_to_nal(&sei_payload)?);
                     }
 
                     for data in new_nals {
@@ -195,8 +185,7 @@ impl IoProcessor for Processor {
                         )?;
                     }
                 } else if let Some(edited_res) = edited_seis.next_back() {
-                    let edited_sei = edited_res?;
-                    let final_data = encode_edited_sei_to_nal(edited_sei)?;
+                    let final_data = edited_res?.encode_to_nal(&sei_payload)?;
 
                     NALUnit::write_with_preset(
                         &mut self.writer,
@@ -242,6 +231,15 @@ impl EditedSei<'_> {
             Self::Mdcv((_, meta)) => meta.encode(),
             Self::Cll((_, meta)) => meta.encode(),
             _ => unreachable!(),
+        }
+    }
+
+    pub fn encode_to_nal(&self, sei_payload: &[u8]) -> Result<Vec<u8>> {
+        match self {
+            Self::None(msg) => {
+                encode_payload_to_sei_prefix(msg.payload_type, sei_message_data(msg, sei_payload))
+            }
+            _ => encode_payload_to_sei_prefix(self.payload_type(), &self.encode_payload()?),
         }
     }
 }

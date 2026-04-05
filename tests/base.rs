@@ -112,3 +112,81 @@ fn edit_multimsg_sei() -> Result<()> {
 
     Ok(())
 }
+
+#[test]
+fn edit_partial_config() -> Result<()> {
+    let temp = assert_fs::TempDir::new().unwrap();
+
+    let input_file = Path::new("assets/regular.hevc");
+    let edit_config = temp.child("config.json");
+
+    // re-writing same metadata results in bit identical output
+    edit_config.write_str(
+        &serde_json::json!({
+            "cll": {
+                "max_content_light_level": 1000,
+                "max_frame_average_light_level": 400
+            }
+        })
+        .to_string(),
+    )?;
+
+    let output_file = temp.child("output.hevc");
+    let expected_file = Path::new("assets/regular.hevc");
+
+    let assert = cargo::cargo_bin_cmd!()
+        .arg("--input")
+        .arg(input_file)
+        .arg("--config")
+        .arg(edit_config.as_ref())
+        .arg("--output")
+        .arg(output_file.as_ref())
+        .assert();
+
+    assert.success().stderr(predicate::str::is_empty());
+
+    output_file
+        .assert(predicate::path::is_file())
+        .assert(predicate::path::eq_file(expected_file));
+
+    Ok(())
+}
+
+#[test]
+fn edit_partial_config_multimsg() -> Result<()> {
+    let temp = assert_fs::TempDir::new().unwrap();
+
+    let input_file = Path::new("assets/multimsg-sei.hevc");
+    let edit_config = temp.child("config.json");
+
+    // re-writing same metadata results in same metadata in separate SEI NALUs
+    edit_config.write_str(
+        &serde_json::json!({
+            "cll": {
+                "max_content_light_level": 1830,
+                "max_frame_average_light_level": 547
+            }
+        })
+        .to_string(),
+    )?;
+
+    let output_file = temp.child("output.hevc");
+    let expected_file = Path::new("assets/multimsg-sei-split.hevc");
+
+    let assert = cargo::cargo_bin_cmd!()
+        .arg("--input")
+        .arg(input_file)
+        .arg("--config")
+        .arg(edit_config.as_ref())
+        .arg("--output")
+        .arg(output_file.as_ref())
+        .assert();
+
+    assert.success().stderr(predicate::str::is_empty());
+
+    output_file
+        .assert(predicate::path::is_file())
+        .assert(predicate::path::eq_file(expected_file));
+
+    Ok(())
+}
