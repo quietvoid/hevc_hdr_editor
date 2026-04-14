@@ -13,8 +13,8 @@ name = "hevc_hdr_editor"
 path = "src/main.rs"
 
 [dependencies]
-bitvec_helpers = "4.0.1"
-hevc_parser = { version = "0.6.10", features = ["hevc_io"] }
+bitvec_helpers = "4.0.2"
+hevc_parser = { version = "0.6.11", features = ["hevc_io"] }
 
 anyhow = "1.0.102"
 clap = { version = "4.6.0", features = ["derive", "wrap_help", "deprecated"] }
